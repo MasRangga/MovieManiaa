@@ -62,6 +62,7 @@ class _SearchScreensState extends State<SearchScreens> {
         backgroundColor: const Color.fromARGB(239, 4, 0, 255),
         centerTitle: true, // Center the title
       ),
+      backgroundColor: Colors.white, // Set background color to white
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

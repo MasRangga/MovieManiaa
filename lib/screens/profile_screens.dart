@@ -42,6 +42,7 @@ class _ProfileScreensState extends State<ProfileScreens> {
         elevation: 0,
         // Remove the leading back button
       ),
+      backgroundColor: Colors.white, // Set background color to white
       body: Container(
         color: Colors.white, // Background color is white
         child: SingleChildScrollView(
