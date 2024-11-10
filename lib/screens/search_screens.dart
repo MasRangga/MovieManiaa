@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviemania/screens/homescreen.dart'; // Import HomeScreen
 import 'package:moviemania/screens/profile_screens.dart'; // Import ProfileScreens
-import 'package:moviemania/styles.dart'; // Ensure to import styles for TextStyles
+import 'package:moviemania/screens/detail_screens.dart'; // Import DetailScreens
 import 'package:moviemania/widgets/bottom_navbar.dart'; // Import BottomNavigationBarWidget
 
 class SearchScreens extends StatefulWidget {
@@ -18,22 +18,26 @@ class _SearchScreensState extends State<SearchScreens> {
   final List<Map<String, dynamic>> movies = [
     {
       'title': 'Movie 1',
-      'rating': 8.5,
+      'rating': 4.5, // Adjusted to be within a 5-star rating
       'description': 'This is a description for Movie 1.',
       'imageUrl':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0bhYtWb34m_h8KkEw9MNVmCkGVgXJdQAQZg&s' // Replace with actual image URL
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0bhYtWb34m_h8KkEw9MNVmCkGVgXJdQAQZg&s'
     },
     {
       'title': 'Movie 2',
-      'rating': 7.2,
+      'rating': 4.0,
       'description': 'This is a description for Movie 2.',
       'imageUrl':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4u9qJGLT-n3vKIc5S97PZUr0e47bWphjGAQ&s' // Replace with actual image URL
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4u9qJGLT-n3vKIc5S97PZUr0e47bWphjGAQ&s'
     },
     // Add more movies as needed
   ];
 
   void onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+
     switch (index) {
       case 0:
         Navigator.pushReplacement(
@@ -47,7 +51,6 @@ class _SearchScreensState extends State<SearchScreens> {
           MaterialPageRoute(builder: (context) => const ProfileScreens()),
         );
         break;
-      // Handle other cases if needed
     }
   }
 
@@ -57,12 +60,12 @@ class _SearchScreensState extends State<SearchScreens> {
       appBar: AppBar(
         title: const Text(
           'Search',
-          style: TextStyle(color: Colors.white), // White text color for title
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color.fromARGB(239, 4, 0, 255),
-        centerTitle: true, // Center the title
+        centerTitle: true,
       ),
-      backgroundColor: Colors.white, // Set background color to white
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -81,94 +84,90 @@ class _SearchScreensState extends State<SearchScreens> {
               },
             ),
             const SizedBox(height: 20),
-            // List of search results (dummy data)
+            // List of search results
             Expanded(
               child: ListView.builder(
-                itemCount: movies.length, // Number of search results
+                itemCount: movies.length,
                 itemBuilder: (context, index) {
                   final movie = movies[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 12.0),
-                    elevation: 8, // Increased elevation for shadow effect
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(15), // Rounded corners
-                    ),
-                    child: ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(15), // Clip the content
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Movie image
-                          Image.network(
-                            movie['imageUrl'],
-                            width: 100,
-                            height: 150,
-                            fit: BoxFit.cover,
-                          ),
-                          const SizedBox(
-                              width: 16), // Space between image and text
-                          // Movie details
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(
-                                  16.0), // Padding around the text
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    movie['title'],
-                                    style: const TextStyle(
-                                      fontSize:
-                                          22, // Increased font size for title
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                      height:
-                                          8), // Space between title and rating
-                                  Row(
-                                    children: [
-                                      // Display stars based on rating
-                                      for (int i = 0; i < 5; i++)
-                                        Icon(
-                                          i < movie['rating'].round()
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          color:
-                                              Colors.amber, // Color for stars
-                                          size: 20, // Size for stars
-                                        ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${movie['rating']}',
-                                        style: const TextStyle(
-                                          fontSize: 16, // Font size for rating
-                                        ),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DetailScreens(),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      margin: const EdgeInsets.symmetric(vertical: 12.0),
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Movie image
+                            Image.network(
+                              movie['imageUrl'],
+                              width: 100,
+                              height: 150,
+                              fit: BoxFit.cover,
+                            ),
+                            const SizedBox(width: 16),
+                            // Movie details
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      movie['title'],
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                      height:
-                                          8), // Space between rating and description
-                                  Text(
-                                    movie['description'],
-                                    style: const TextStyle(
-                                      fontSize:
-                                          14, // Increased font size for description
-                                      color: Colors.grey,
                                     ),
-                                    maxLines:
-                                        2, // Limit the description to 2 lines
-                                    overflow: TextOverflow
-                                        .ellipsis, // Show ellipsis if the text overflows
-                                  ),
-                                ],
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        for (int i = 0; i < 5; i++)
+                                          Icon(
+                                            i < movie['rating'].round()
+                                                ? Icons.star
+                                                : Icons.star_border,
+                                            color: Colors.amber,
+                                            size: 20,
+                                          ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '${movie['rating']}',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      movie['description'],
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );

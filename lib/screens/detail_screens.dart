@@ -7,38 +7,33 @@ class DetailScreens extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Definisikan nilai-nilai yang sebelumnya menggunakan variabel
     const double defaultMargin = 16.0;
     const double defaultRadius = 12.0;
-    const Color lightBackgroundColor = Colors.grey;
+    const Color lightBackgroundColor = Color(0xFFE0E0E0);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(239, 4, 0, 255), // Warna AppBar
-        elevation: 0, // Menghilangkan shadow
+        backgroundColor: const Color.fromARGB(239, 4, 0, 255),
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.white), // Ikon Arrow Back menjadi putih
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            // Arahkan pengguna ke halaman HomeScreen saat tombol Back ditekan
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           },
         ),
-        centerTitle: true, // Judul berada di tengah
+        centerTitle: true,
         title: Text(
           'Detail Movie',
           style: TextStyles.title.copyWith(
-            color: Colors.white, // Warna judul menjadi putih
+            color: Colors.white,
           ),
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: defaultMargin,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,8 +46,7 @@ class DetailScreens extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(defaultRadius),
                   image: const DecorationImage(
-                    image: AssetImage(
-                        'assets/icons/detailimage.jpg'), // Pastikan path gambar benar
+                    image: AssetImage('assets/icons/detailimage.jpg'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -65,8 +59,8 @@ class DetailScreens extends StatelessWidget {
                   Text(
                     'Behind Her Eyes',
                     style: TextStyles.body.copyWith(
-                      fontSize: 22, // Perbesar font judul film
-                      fontWeight: FontWeight.w600, // medium
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -75,7 +69,7 @@ class DetailScreens extends StatelessWidget {
                       Text(
                         'Director: Erik Richter Strand',
                         style: TextStyles.body.copyWith(
-                          fontWeight: FontWeight.w300, // light
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -87,7 +81,7 @@ class DetailScreens extends StatelessWidget {
                       Text(
                         '4.9',
                         style: TextStyles.body.copyWith(
-                          fontWeight: FontWeight.w300, // light
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                     ],
@@ -104,11 +98,11 @@ class DetailScreens extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
-                          color: Colors.grey[200], // LightBackgroundColor
+                          color: lightBackgroundColor,
                         ),
                         child: Text(
                           'Drama',
-                          style: TextStyles.body, // Atur style sesuai kebutuhan
+                          style: TextStyles.body,
                         ),
                       ),
                       // Genre 2
@@ -120,11 +114,11 @@ class DetailScreens extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
-                          color: Colors.grey[200], // LightBackgroundColor
+                          color: lightBackgroundColor,
                         ),
                         child: Text(
                           'Supernatural Thriller',
-                          style: TextStyles.body, // Atur style sesuai kebutuhan
+                          style: TextStyles.body,
                         ),
                       ),
                     ],
@@ -140,7 +134,7 @@ class DetailScreens extends StatelessWidget {
                     'Storyline',
                     style: TextStyles.body.copyWith(
                       fontSize: 20,
-                      fontWeight: FontWeight.w600, // medium
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -149,16 +143,16 @@ class DetailScreens extends StatelessWidget {
                       text:
                           'Behind Her Eyes follows Louise, a single mother who embarks on an affair with her psychiatrist boss while secretly befriending his enigmatic wife. As the love triangle intensifies, dark secrets start to unravel, leading to a twisted and supernatural climax.',
                       style: TextStyle(
-                        fontSize: 16, // Perbesar font deskripsi
-                        color: Colors.grey[600], // Light Grey
-                        fontWeight: FontWeight.w300, // light
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w300,
                       ),
                       children: [
                         TextSpan(
                           text: ' Read More',
                           style: TextStyle(
-                            color: Colors.blueAccent, // Blue Text
-                            fontWeight: FontWeight.w400, // regular
+                            color: Colors.blueAccent,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ],

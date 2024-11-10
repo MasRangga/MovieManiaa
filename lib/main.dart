@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moviemania/screens/homescreen.dart';
-import 'package:moviemania/screens/login_screens.dart';
 import 'package:moviemania/screens/welcome_screens.dart';
 import 'package:moviemania/widgets/splash_screen.dart';
 
@@ -13,21 +11,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Cinema Collection',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const SplashScreenWithDelay(),
+    );
+  }
+}
+
+class SplashScreenWithDelay extends StatelessWidget {
+  const SplashScreenWithDelay({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
       future: Future.delayed(const Duration(seconds: 4)),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const MaterialApp(
-            // Menambahkan MaterialApp agar FutureBuilder tidak error
-            home: SplashScreen(),
-            debugShowCheckedModeBanner: false,
-          );
+          return const SplashScreen();
         } else {
-          return MaterialApp(
-            title: 'Cinema Collection',
-            debugShowCheckedModeBanner: false,
-            home: const GetStartedScreens(),
-          );
+          return const GetStartedScreens();
         }
       },
     );
