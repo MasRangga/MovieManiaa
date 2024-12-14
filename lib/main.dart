@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:moviemania/screens/welcome_screens.dart';
-import 'package:moviemania/widgets/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:moviemania/screens/login_screens.dart'; // Sesuaikan dengan lokasi login_screens.dart
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -12,30 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cinema Collection',
-      debugShowCheckedModeBanner: false,
+      title: 'Movie Mania',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SplashScreenWithDelay(),
-    );
-  }
-}
-
-class SplashScreenWithDelay extends StatelessWidget {
-  const SplashScreenWithDelay({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.delayed(const Duration(seconds: 4)),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SplashScreen();
-        } else {
-          return const GetStartedScreens();
-        }
-      },
+      home: const LoginScreens(),
     );
   }
 }

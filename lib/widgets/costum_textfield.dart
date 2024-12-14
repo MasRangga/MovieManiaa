@@ -10,6 +10,7 @@ class CustomTextField extends StatefulWidget {
     this.isObscure = false,
     this.hasSuffix = false,
     this.onPressed,
+    this.validator, // Tambahkan validator
     super.key,
   });
 
@@ -20,6 +21,7 @@ class CustomTextField extends StatefulWidget {
   final bool isObscure;
   final bool hasSuffix;
   final VoidCallback? onPressed;
+  final String? Function(String?)? validator; // Validator tambahan
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -42,13 +44,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: widget.controller,
       style: TextStyles.body, // Pastikan TextStyles.body sudah didefinisikan
       keyboardType: widget.textInputType,
       textInputAction: widget.textInputAction,
       obscureText: widget.isObscure,
       focusNode: _focusNode,
+      validator:
+          widget.validator, // Integrasikan validator ke dalam TextFormField
       decoration: InputDecoration(
         labelText: widget.hint, // Menambahkan label text
         labelStyle: TextStyles.body.copyWith(

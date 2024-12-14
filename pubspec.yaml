@@ -31,6 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  firebase_core: ^3.8.0
+  firebase_auth: ^5.3.3
+  path_provider: ^2.0.14
+  cloud_firestore: ^5.0.0
   google_fonts: ^5.0.0 # Versi terbaru dari google_fonts
 
   # The following adds the Cupertino Icons font to your application.
@@ -56,8 +60,6 @@ flutter_launcher_icons:
   image_path: "assets/icons/LogoCinemaCollection.png"
   min_sdk_android: 16 # android min sdk min:16, default 21
 
-
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -77,8 +79,6 @@ flutter:
       fonts:
         - asset: assets/icons/fonts/Outfit-Regular.ttf
         - asset: assets/icons/fonts/Outfit-SemiBold.ttf
-
-
 
   # To add assets to your application, add an assets section, like this:
   # assets:
