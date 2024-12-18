@@ -12,23 +12,23 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-     namespace = "com.example.moviemania"
-     compileSdk = 34 // Ubah dari 33 menjadi 34
+    namespace = "com.rangga.moviemania"
+    compileSdk = 34 // Ubah dari 33 menjadi 34
 
     defaultConfig {
-        applicationId = "com.example.moviemania"
+        applicationId = "com.rangga.moviemania"
         minSdk = 23 // Pastikan ini sudah 23
         targetSdk = 34 // Sesuaikan dengan compileSdk
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "3.0"
     }
 
     signingConfigs {
         release {
-            keyAlias = keystoreProperties['keyAlias']
-            keyPassword = keystoreProperties['keyPassword']
-            storeFile = keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword = keystoreProperties['storePassword']
+            storeFile file('C:/Users/rendy/upload-keystore.jks') // Lokasi keystore
+            storePassword 'rangga123'                   // Password keystore
+            keyAlias 'upload'                               // Alias saat membuat keystore
+            keyPassword 'rangga123'                        // Password alias
         }
     }
 
@@ -50,4 +50,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation "com.google.android.material:material:1.9.0"
 }

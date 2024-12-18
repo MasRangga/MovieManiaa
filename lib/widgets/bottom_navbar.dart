@@ -39,15 +39,25 @@ class BottomNavigationBarWidget extends StatelessWidget {
             ),
             onPressed: () => onItemTapped(1),
           ),
-          // Tombol Profile
+          // Tombol Watchlist
           IconButton(
             icon: Icon(
-              Icons.person,
+              Icons.bookmark,
               color: selectedIndex == 2
                   ? const Color.fromARGB(239, 4, 0, 255)
                   : Colors.grey,
             ),
             onPressed: () => onItemTapped(2),
+          ),
+          // Tombol Profile
+          IconButton(
+            icon: Icon(
+              Icons.person,
+              color: selectedIndex == 3
+                  ? const Color.fromARGB(239, 4, 0, 255)
+                  : Colors.grey,
+            ),
+            onPressed: () => onItemTapped(3),
           ),
         ],
       ),

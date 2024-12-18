@@ -36,6 +36,9 @@ dependencies:
   path_provider: ^2.0.14
   cloud_firestore: ^5.0.0
   google_fonts: ^5.0.0 # Versi terbaru dari google_fonts
+  http: ^1.0.0
+  flutter_dotenv: ^5.0.2
+  shared_preferences: ^2.3.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -53,6 +56,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+  change_app_package_name: ^1.4.0
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -73,6 +77,7 @@ flutter:
     - assets/icons/logo2.png
     - assets/icons/detailimage.jpg
     - assets/icons/coverbg.png
+    - assets/icons/empty_watchlist.png
 
   fonts:
     - family: Outfit

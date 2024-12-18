@@ -1,15 +1,101 @@
 import 'package:flutter/material.dart';
-import 'package:moviemania/styles.dart'; // Asumsikan TextStyles sudah didefinisikan
-import 'package:moviemania/screens/homescreen.dart';
+import 'package:moviemania/services/tmdb_service.dart';
+import 'package:moviemania/services/watchlist_service.dart';
+import 'package:moviemania/services/movie.dart';
+import 'package:moviemania/styles.dart';
 
-class DetailScreens extends StatelessWidget {
-  const DetailScreens({Key? key}) : super(key: key);
+class DetailScreens extends StatefulWidget {
+  final int movieId;
+  final String title;
+  final String posterUrl;
+
+  const DetailScreens({
+    Key? key,
+    required this.movieId,
+    required this.title,
+    required this.posterUrl,
+  }) : super(key: key);
+
+  @override
+  State<DetailScreens> createState() => _DetailScreensState();
+}
+
+class _DetailScreensState extends State<DetailScreens> {
+  final TMDBService tmdbService = TMDBService();
+  final WatchlistService watchlistService = WatchlistService();
+
+  String director = "Loading...";
+  double rating = 0.0;
+  String storyline = "Loading...";
+  bool isInWatchlist = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMovieDetails();
+    checkWatchlist();
+  }
+
+  Future<void> fetchMovieDetails() async {
+    try {
+      final details = await tmdbService.fetchMovieDetails(widget.movieId);
+
+      setState(() {
+        rating = details['vote_average'] ?? 0.0;
+        storyline = details['overview'] ?? "No storyline available.";
+
+        final crew = details['credits']['crew'] as List<dynamic>;
+        final directorData = crew.firstWhere(
+          (member) => member['job'] == 'Director',
+          orElse: () => null,
+        );
+        director =
+            directorData != null ? directorData['name'] : "Unknown Director";
+      });
+    } catch (e) {
+      print("Error fetching movie details: $e");
+      setState(() {
+        director = "Unknown Director";
+        storyline = "No storyline available.";
+      });
+    }
+  }
+
+  Future<void> checkWatchlist() async {
+    final exists = await watchlistService.isInWatchlist(widget.movieId);
+    setState(() {
+      isInWatchlist = exists;
+    });
+  }
+
+  Future<void> toggleWatchlist() async {
+    final movie = Movie(
+      id: widget.movieId,
+      title: widget.title,
+      imageUrl: widget.posterUrl,
+    );
+
+    if (isInWatchlist) {
+      await watchlistService.removeFromWatchlist(widget.movieId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Removed from Watchlist')),
+      );
+    } else {
+      await watchlistService.addToWatchlist(movie);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Added to Watchlist')),
+      );
+    }
+
+    setState(() {
+      isInWatchlist = !isInWatchlist;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     const double defaultMargin = 16.0;
     const double defaultRadius = 12.0;
-    const Color lightBackgroundColor = Color(0xFFE0E0E0);
 
     return Scaffold(
       appBar: AppBar(
@@ -18,10 +104,7 @@ class DetailScreens extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
+            Navigator.pop(context);
           },
         ),
         centerTitle: true,
@@ -39,25 +122,23 @@ class DetailScreens extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 30),
-              // Poster Film
               Container(
                 height: 370,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(defaultRadius),
-                  image: const DecorationImage(
-                    image: AssetImage('assets/icons/detailimage.jpg'),
+                  image: DecorationImage(
+                    image: NetworkImage(widget.posterUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               const SizedBox(height: 12),
-              // Informasi Film
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Behind Her Eyes',
+                    widget.title,
                     style: TextStyles.body.copyWith(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
@@ -67,7 +148,7 @@ class DetailScreens extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'Director: Erik Richter Strand',
+                        'Director: $director',
                         style: TextStyles.body.copyWith(
                           fontWeight: FontWeight.w300,
                         ),
@@ -79,54 +160,16 @@ class DetailScreens extends StatelessWidget {
                         size: 18,
                       ),
                       Text(
-                        '4.9',
+                        '$rating',
                         style: TextStyles.body.copyWith(
                           fontWeight: FontWeight.w300,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      // Genre 1
-                      Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 4,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: lightBackgroundColor,
-                        ),
-                        child: Text(
-                          'Drama',
-                          style: TextStyles.body,
-                        ),
-                      ),
-                      // Genre 2
-                      Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 4,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: lightBackgroundColor,
-                        ),
-                        child: Text(
-                          'Supernatural Thriller',
-                          style: TextStyles.body,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
-              const SizedBox(height: 30),
-              // Storyline
+              const SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -138,24 +181,12 @@ class DetailScreens extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text.rich(
-                    TextSpan(
-                      text:
-                          'Behind Her Eyes follows Louise, a single mother who embarks on an affair with her psychiatrist boss while secretly befriending his enigmatic wife. As the love triangle intensifies, dark secrets start to unravel, leading to a twisted and supernatural climax.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w300,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: ' Read More',
-                          style: TextStyle(
-                            color: Colors.blueAccent,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
+                  Text(
+                    storyline,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ],
@@ -163,6 +194,26 @@ class DetailScreens extends StatelessWidget {
             ],
           ),
         ],
+      ),
+      // Tombol di bagian bawah layar
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(16.0),
+        color: Colors.white,
+        child: ElevatedButton.icon(
+          onPressed: toggleWatchlist,
+          icon: Icon(
+            isInWatchlist ? Icons.check : Icons.add,
+            color: Colors.white,
+          ),
+          label: Text(
+            isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist',
+            style: const TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blueAccent,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+        ),
       ),
     );
   }

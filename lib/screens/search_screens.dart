@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:moviemania/screens/homescreen.dart'; // Import HomeScreen
-import 'package:moviemania/screens/profile_screens.dart'; // Import ProfileScreens
-import 'package:moviemania/screens/detail_screens.dart'; // Import DetailScreens
-import 'package:moviemania/widgets/bottom_navbar.dart'; // Import BottomNavigationBarWidget
+import 'package:moviemania/screens/homescreen.dart';
+import 'package:moviemania/screens/profile_screens.dart';
+import 'package:moviemania/screens/detail_screens.dart';
+import 'package:moviemania/screens/watchlist_screen.dart';
+import 'package:moviemania/services/tmdb_service.dart';
+import 'package:moviemania/widgets/bottom_navbar.dart';
 
 class SearchScreens extends StatefulWidget {
   const SearchScreens({Key? key}) : super(key: key);
@@ -13,25 +15,9 @@ class SearchScreens extends StatefulWidget {
 
 class _SearchScreensState extends State<SearchScreens> {
   int selectedIndex = 1; // Set the selected index for the search screen
-
-  // Dummy movie data
-  final List<Map<String, dynamic>> movies = [
-    {
-      'title': 'Movie 1',
-      'rating': 4.5, // Adjusted to be within a 5-star rating
-      'description': 'This is a description for Movie 1.',
-      'imageUrl':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0bhYtWb34m_h8KkEw9MNVmCkGVgXJdQAQZg&s'
-    },
-    {
-      'title': 'Movie 2',
-      'rating': 4.0,
-      'description': 'This is a description for Movie 2.',
-      'imageUrl':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4u9qJGLT-n3vKIc5S97PZUr0e47bWphjGAQ&s'
-    },
-    // Add more movies as needed
-  ];
+  final TMDBService tmdbService = TMDBService();
+  List<dynamic> searchResults = [];
+  bool isLoading = false;
 
   void onItemTapped(int index) {
     setState(() {
@@ -39,13 +25,25 @@ class _SearchScreensState extends State<SearchScreens> {
     });
 
     switch (index) {
-      case 0:
+      case 0: // Home
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
         break;
-      case 2:
+      case 1: // Search
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SearchScreens()),
+        );
+        break;
+      case 2: // Watchlist
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WatchlistScreen()),
+        );
+        break;
+      case 3: // Profile
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const ProfileScreens()),
@@ -54,12 +52,39 @@ class _SearchScreensState extends State<SearchScreens> {
     }
   }
 
+  Future<void> searchMovies(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        searchResults = [];
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final results = await tmdbService.searchMovies(query);
+      setState(() {
+        searchResults = results;
+      });
+    } catch (error) {
+      print("Error fetching search results: $error");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Search',
+          'Search Movies',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: const Color.fromARGB(239, 4, 0, 255),
@@ -73,94 +98,131 @@ class _SearchScreensState extends State<SearchScreens> {
             // Search field
             TextField(
               decoration: InputDecoration(
-                hintText: 'Search...',
+                hintText: 'Search for movies...',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
                 prefixIcon: const Icon(Icons.search),
               ),
               onChanged: (value) {
-                // Implement search logic here
+                searchMovies(value);
               },
             ),
             const SizedBox(height: 20),
-            // List of search results
-            Expanded(
-              child: ListView.builder(
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  final movie = movies[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DetailScreens(),
+            if (isLoading) ...[
+              const Center(child: CircularProgressIndicator()),
+            ] else if (searchResults.isEmpty) ...[
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.search_off, size: 100, color: Colors.grey[400]),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'No results found.\nTry searching for another movie.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ] else ...[
+              Expanded(
+                child: ListView.builder(
+                  itemCount: searchResults.length,
+                  itemBuilder: (context, index) {
+                    final movie = searchResults[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreens(
+                              movieId: movie['id'],
+                              title: movie['title'],
+                              posterUrl:
+                                  'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                            ),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      );
-                    },
-                    child: Card(
-                      margin: const EdgeInsets.symmetric(vertical: 12.0),
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Movie image
-                            Image.network(
-                              movie['imageUrl'],
-                              width: 100,
-                              height: 150,
-                              fit: BoxFit.cover,
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                              ),
+                              child: movie['poster_path'] != null
+                                  ? Image.network(
+                                      'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                                      width: 100,
+                                      height: 150,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      width: 100,
+                                      height: 150,
+                                      color: Colors.grey,
+                                      child: const Icon(
+                                        Icons.movie,
+                                        size: 50,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                             const SizedBox(width: 16),
                             // Movie details
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(12.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      movie['title'],
+                                      movie['title'] ?? 'No Title',
                                       style: const TextStyle(
-                                        fontSize: 22,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      movie['release_date'] != null
+                                          ? 'Release Date: ${movie['release_date']}'
+                                          : 'Release Date: Unknown',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
                                       ),
                                     ),
                                     const SizedBox(height: 8),
                                     Row(
                                       children: [
-                                        for (int i = 0; i < 5; i++)
-                                          Icon(
-                                            i < movie['rating'].round()
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            color: Colors.amber,
-                                            size: 20,
-                                          ),
-                                        const SizedBox(width: 8),
+                                        const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(width: 4),
                                         Text(
-                                          '${movie['rating']}',
+                                          '${movie['vote_average'] ?? '0.0'} / 10',
                                           style: const TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 14,
+                                            color: Colors.grey,
                                           ),
                                         ),
                                       ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      movie['description'],
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
@@ -169,11 +231,11 @@ class _SearchScreensState extends State<SearchScreens> {
                           ],
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

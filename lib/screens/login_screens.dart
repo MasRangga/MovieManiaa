@@ -36,6 +36,7 @@ class _LoginScreensState extends State<LoginScreens> {
         email: emailController.text,
         password: passwordController.text,
       );
+      print("User ID: ${userCredential.user?.uid}"); // Debugging UID
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

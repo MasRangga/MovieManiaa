@@ -26,7 +26,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -50,19 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBYQI4I5VYIb6l2LW14VIKW68v8k_4rTBE',
-    appId: '1:55921678229:android:30e73e32ef809dedbf089c',
-    messagingSenderId: '55921678229',
-    projectId: 'movie-mania-app',
-    storageBucket: 'movie-mania-app.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBs6tw79JWEcDLXnZ-Z6bgXwG1CKhdz9So',
-    appId: '1:55921678229:ios:8d7f75c6e40eec5ebf089c',
-    messagingSenderId: '55921678229',
-    projectId: 'movie-mania-app',
-    storageBucket: 'movie-mania-app.firebasestorage.app',
-    iosBundleId: 'com.example.moviemania',
+    apiKey: 'AIzaSyDm2S4myp6R39NZhOwvtvKdDeHUBNxvIeg',
+    appId: '1:595576018304:android:3702a90ae3ddc012885d65',
+    messagingSenderId: '595576018304',
+    projectId: 'movie-mania-new',
+    storageBucket: 'movie-mania-new.firebasestorage.app',
   );
 }

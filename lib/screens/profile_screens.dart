@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:moviemania/screens/homescreen.dart';
 import 'package:moviemania/screens/login_screens.dart';
 import 'package:moviemania/screens/search_screens.dart';
+import 'package:moviemania/screens/watchlist_screen.dart';
 import 'package:moviemania/styles.dart'; // Pastikan TextStyles sudah didefinisikan
 import 'package:moviemania/widgets/bottom_navbar.dart'; // BottomNavigationBarWidget
 
@@ -17,7 +18,7 @@ class ProfileScreens extends StatefulWidget {
 class _ProfileScreensState extends State<ProfileScreens> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  int selectedIndex = 2;
+  int selectedIndex = 3;
   String userName = "Loading...";
   String userEmail = "Loading...";
 
@@ -63,6 +64,14 @@ class _ProfileScreensState extends State<ProfileScreens> {
           MaterialPageRoute(builder: (context) => const SearchScreens()),
         );
         break;
+      case 2: // Tambahkan kondisi untuk Watchlist
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WatchlistScreen()),
+        );
+        break;
+      case 3: // Tetap di halaman Profile
+        break;
     }
   }
 
@@ -96,10 +105,10 @@ class _ProfileScreensState extends State<ProfileScreens> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Tentang Aplikasi"),
+          title: const Text("About the Application"),
           content: const Text(
-            "Cinema Collection adalah aplikasi untuk menemukan berbagai film. "
-            "Nikmati berbagai pilihan film terbaik dan terpopuler dari seluruh dunia dengan tampilan yang mudah digunakan.",
+            "Cinema Collection is an application to discover various movies. "
+            "Enjoy a wide selection of the best and most popular movies from around the world with an easy-to-use interface.",
           ),
           actions: [
             TextButton(
@@ -116,21 +125,11 @@ class _ProfileScreensState extends State<ProfileScreens> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Profile', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(239, 4, 0, 255),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.white), // Panah kembali
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const HomeScreen()), // Arahkan ke Home
-            );
-          },
-        ),
       ),
       backgroundColor: Colors.white,
       body: Container(
@@ -177,7 +176,7 @@ class _ProfileScreensState extends State<ProfileScreens> {
                           _showAboutAppDialog, // Menampilkan dialog tentang aplikasi
                       icon: const Icon(Icons.info, color: Colors.blue),
                       label: const Text(
-                        'Tentang Aplikasi',
+                        'About',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.normal,
